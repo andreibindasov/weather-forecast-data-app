@@ -1,6 +1,6 @@
 import requests
 
-APIkey = "3ea07bbd56db75de96a74a9fc3d26b21"
+APIkey = see_vars
 
 
 def get_data(place, days=None, d_type=None):
