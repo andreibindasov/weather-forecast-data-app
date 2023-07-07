@@ -1,5 +1,6 @@
 import streamlit as st
 import plotly.express as px
+from backend import get_data
 
 st.set_page_config(layout="wide")
 style = "<style>div{text-align: center; color: #669966;}</style>"
@@ -23,17 +24,12 @@ with st.container():
         option = st.selectbox("Select data to view", ("Temperature", "Sky"))
 
 
-def get_data(days):
-    dates = ["2023-07-05", "2023-07-06", "2023-07-07", "2023-07-08", "2023-07-09"]
-    temperatures = [days * i for i in [17, 23, 33, 28, 30]]
-    return dates, temperatures
-
-
 with st.container():
     with st.columns([.5, 1, .5])[1]:
         st.subheader(f"{option} for the next {days} day(s) in {place}")
         # create plotly figure before displaying a chart
-        d,t = get_data(days)
+        data = get_data(place, days, option)
+        # d,t = get_data(days)
         figure = px.line(x=d, y=t, labels={"x": "Date", "y": "Temperature (C)"})
         # display plotly chart
         st.plotly_chart(figure)
