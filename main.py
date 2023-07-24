@@ -7,6 +7,8 @@ style = "<style>div{text-align: center; color: #669966;}</style>"
 
 st.markdown(style, unsafe_allow_html=True)
 
+# Add title, text input, slider, selectbox and subheader wigets
+
 with st.container():
     with st.columns([0.25, 2, 0.25])[1]:
         # st.markdown(f"<div style='text-align:center;'><img src='weather.png' style='width:150px;'/></div>",
@@ -28,8 +30,22 @@ with st.container():
     with st.columns([.5, 1, .5])[1]:
         st.subheader(f"{option} for the next {days} day(s) in {place}")
         # create plotly figure before displaying a chart
-        data = get_data(place, days, option)
-        # d,t = get_data(days)
-        figure = px.line(x=d, y=t, labels={"x": "Date", "y": "Temperature (C)"})
-        # display plotly chart
-        st.plotly_chart(figure)
+        if place:
+            try:
+                filtered_data = get_data(place, days)
+
+                if option == "Temperature":
+                    t = [dict["main"]["temp"] / 10 for dict in filtered_data]
+                    d = [dict["dt_txt"] for dict in filtered_data]
+                    # Create a temperature plot
+                    figure = px.line(x=d, y=t, labels={"x": "Date", "y": "Temperature (C)"})
+                    # display plotly chart
+                    st.plotly_chart(figure)
+                if option == "Sky":
+                    images = {"Clear": "images/clear.png", "Clouds": "images/cloud.png",
+                              "Rain": "images/rain.png", "Snow": "images/snow.png"}
+                    sky_conditions = [dict["weather"][0]["main"] for dict in filtered_data]
+                    img_paths = [images[condition] for condition in sky_conditions]
+                    st.image(img_paths, width=120)
+            except KeyError:
+                st.write("This place does not exist")
